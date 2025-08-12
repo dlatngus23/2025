@@ -2,22 +2,22 @@ import streamlit as st
 
 # MBTI별 귀여운 동물 데이터 (이미지 + 이름)
 mbti_animals = {
-    "INTJ": {"name": "고양이", "img": "https://i.imgur.com/QZ8jZrD.jpg"},
-    "INTP": {"name": "부엉이", "img": "https://i.imgur.com/Y9Y4Y7Q.jpg"},
-    "ENTJ": {"name": "사자", "img": "https://i.imgur.com/kGr3K7m.jpg"},
-    "ENTP": {"name": "원숭이", "img": "https://i.imgur.com/WQq5w5v.jpg"},
-    "INFJ": {"name": "사슴", "img": "https://i.imgur.com/Z6F4d0q.jpg"},
-    "INFP": {"name": "토끼", "img": "https://i.imgur.com/Gf1B1hs.jpg"},
-    "ENFJ": {"name": "강아지", "img": "https://i.imgur.com/0zQF4uO.jpg"},
-    "ENFP": {"name": "코알라", "img": "https://i.imgur.com/lqQz7Zf.jpg"},
-    "ISTJ": {"name": "거북이", "img": "https://i.imgur.com/BIRbYdN.jpg"},
-    "ISFJ": {"name": "펭귄", "img": "https://i.imgur.com/mbx2Qzk.jpg"},
-    "ESTJ": {"name": "독수리", "img": "https://i.imgur.com/wQ9Cqja.jpg"},
-    "ESFJ": {"name": "카피바라", "img": "https://i.imgur.com/8BYc7X2.jpg"},
-    "ISTP": {"name": "여우", "img": "https://i.imgur.com/YWBo4w3.jpg"},
-    "ISFP": {"name": "고슴도치", "img": "https://i.imgur.com/X1j7zEo.jpg"},
-    "ESTP": {"name": "돌고래", "img": "https://i.imgur.com/RcH6Whv.jpg"},
-    "ESFP": {"name": "햄스터", "img": "https://i.imgur.com/fgLQ3Ov.jpg"},
+    "INTJ": {"name": "고양이", "img": "https://images.unsplash.com/photo-1518791841217-8f162f1e1131"},
+    "INTP": {"name": "부엉이", "img": "https://images.unsplash.com/photo-1501706362039-c6e80948f162"},
+    "ENTJ": {"name": "사자", "img": "https://images.unsplash.com/photo-1552410260-0fd40f1e8a3d"},
+    "ENTP": {"name": "원숭이", "img": "https://images.unsplash.com/photo-1574158622682-e40e69881006"},
+    "INFJ": {"name": "사슴", "img": "https://images.unsplash.com/photo-1501706362039-c6e80948f162"},
+    "INFP": {"name": "토끼", "img": "https://images.unsplash.com/photo-1547394765-185e1e68f34e"},
+    "ENFJ": {"name": "강아지", "img": "https://images.unsplash.com/photo-1507149833265-60c372daea22"},
+    "ENFP": {"name": "코알라", "img": "https://images.unsplash.com/photo-1575548641098-f2a94b79fe66"},
+    "ISTJ": {"name": "거북이", "img": "https://images.unsplash.com/photo-1505843293017-71cb1a4e68b9"},
+    "ISFJ": {"name": "펭귄", "img": "https://images.unsplash.com/photo-1504292004442-f3866f0e9c9e"},
+    "ESTJ": {"name": "독수리", "img": "https://images.unsplash.com/photo-1572044162444-ad60f128bdea"},
+    "ESFJ": {"name": "카피바라", "img": "https://images.unsplash.com/photo-1624896877888-1739b9e8f5f5"},
+    "ISTP": {"name": "여우", "img": "https://images.unsplash.com/photo-1546182990-dffeafbe841d"},
+    "ISFP": {"name": "고슴도치", "img": "https://images.unsplash.com/photo-1601758124279-0c3f31a1127a"},
+    "ESTP": {"name": "돌고래", "img": "https://images.unsplash.com/photo-1507525428034-b723cf961d3e"},
+    "ESFP": {"name": "햄스터", "img": "https://images.unsplash.com/photo-1618847880473-029d8ab0f8d4"},
 }
 
 # 페이지 설정
