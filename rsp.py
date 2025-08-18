@@ -42,54 +42,17 @@ if "user_two" not in st.session_state:
     st.session_state.user_two = ["가위", "바위"]
 if "ai_two" not in st.session_state:
     st.session_state.ai_two = ["가위", "바위"]
-if "ai_precommit" not in st.session_state:
-    st.session_state.ai_precommit = None
-if "history" not in st.session_state:
-    st.session_state.history = []
 if "user_keep_history" not in st.session_state:
     st.session_state.user_keep_history = []
 if "pending_choice" not in st.session_state:
     st.session_state.pending_choice = None
 
 # ---------------------------
-# 사이드바
+# AI 두 손 선택 전략
 # ---------------------------
-st.sidebar.title("⚙️ 설정")
-mode = st.sidebar.radio("모드 선택", ["공정 모드(동시 선택)", "도전 모드(AI 최적 반응)"], index=0)
-level = st.sidebar.select_slider("난이도", options=["초급","중급","고급"], value="중급")
-if st.sidebar.button("🔄 전체 리셋"):
-    for key in list(st.session_state.keys()):
-        del st.session_state[key]
-    st.rerun()
-
-# ---------------------------
-# AI 초기 두 손 선택 전략
-# ---------------------------
-def ai_pick_two(level:str):
-    counts = Counter(st.session_state.user_keep_history)
-    if level == "초급":
-        base = {"가위":1, "바위":1, "보":1}
-    elif level == "중급":
-        base = {"가위":1.0, "바위":1.0, "보":1.0}
-        if counts:
-            most = counts.most_common(1)[0][0]
-            counter = {"가위":"바위", "바위":"보", "보":"가위"}[most]
-            base[counter] += 0.7
-    else:
-        total = sum(counts.values()) if counts else 0
-        if total == 0:
-            base = {"가위":1.2, "바위":1.2, "보":1.2}
-        else:
-            dist = {h: counts[h]/total for h in HANDS}
-            score_map = {}
-            for h in HANDS:
-                win_prob = sum(p for u,p in dist.items() if judge(h,u)==1)
-                draw_prob = sum(p for u,p in dist.items() if judge(h,u)==0)
-                score_map[h] = 1e-6 + win_prob + 0.5*draw_prob
-            base = score_map
-    first = weighted_choice(base)
-    second = weighted_choice(base)
-    return [first, second]
+def ai_pick_two():
+    # 간단히 랜덤 전략
+    return [random.choice(HANDS), random.choice(HANDS)]
 
 # ---------------------------
 # 헤더
@@ -118,11 +81,7 @@ if st.session_state.phase == "pick_two":
     st.session_state.user_two = [u1, u2]
 
     if st.button("🔍 공개하기"):
-        st.session_state.ai_two = ai_pick_two(level)
-        if "공정" in mode:
-            st.session_state.ai_precommit = random.choice(st.session_state.ai_two)
-        else:
-            st.session_state.ai_precommit = None
+        st.session_state.ai_two = ai_pick_two()
         st.session_state.phase = "reveal"
         st.rerun()
 
@@ -141,6 +100,8 @@ elif st.session_state.phase == "reveal":
 
 elif st.session_state.phase == "keep_one":
     st.subheader("3) 어떤 손을 남길까요?")
+    st.caption(f"AI는 두 손을 이렇게 냈습니다: {EMOJI[st.session_state.ai_two[0]]} {EMOJI[st.session_state.ai_two[1]]}")
+    
     user_choice = st.radio(
         "내가 남길 손 선택",
         options=[f"{EMOJI[h]} {h}" for h in st.session_state.user_two],
@@ -155,10 +116,7 @@ elif st.session_state.phase == "keep_one":
 
 elif st.session_state.phase == "result":
     user_keep = st.session_state.pending_choice
-    if "공정" in mode:
-        ai_keep = st.session_state.ai_precommit
-    else:
-        ai_keep = best_response(st.session_state.ai_two, user_keep)
+    ai_keep = best_response(st.session_state.ai_two, user_keep)
 
     st.subheader("4) 최종 결과")
     c1, c2 = st.columns(2)
@@ -184,27 +142,7 @@ elif st.session_state.phase == "result":
             st.session_state.score["ai"] += 1
 
         st.session_state.user_keep_history.append(user_keep)
-        st.session_state.history.append({
-            "round": st.session_state.round,
-            "user_two": tuple(st.session_state.user_two),
-            "ai_two": tuple(st.session_state.ai_two),
-            "mode": mode,
-            "level": level,
-            "user_keep": user_keep,
-            "ai_keep": ai_keep,
-            "result": "승" if result==1 else ("무" if result==0 else "패"),
-        })
-
         st.session_state.round += 1
         st.session_state.phase = "pick_two"
-        st.session_state.ai_precommit = None
         st.session_state.pending_choice = None
         st.rerun()
-
-# ---------------------------
-# 기록
-# ---------------------------
-st.divider()
-with st.expander("📜 전판 기록"):
-    for h in reversed(st.session_state.history[-50:]):
-        st.write(f"R{h['round']} | {h['user_two']}→{h['user_keep']} vs {h['ai_two']}→{h['ai_keep']} ⇒ {h['result']}")
