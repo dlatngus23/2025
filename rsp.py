@@ -1,7 +1,6 @@
 # app.py
 import streamlit as st
 import random
-from collections import Counter
 
 st.set_page_config(page_title="AI 가위바위보 하나빼기", page_icon="✌️", layout="centered")
 
@@ -14,20 +13,6 @@ def judge(user, ai):
     if (user, ai) in [("가위","보"), ("바위","가위"), ("보","바위")]:
         return 1
     return -1
-
-def best_response(ai_candidates, target_user_hand):
-    ranked = sorted(ai_candidates, key=lambda h: (-judge(h, target_user_hand), random.random()))
-    return ranked[0]
-
-def weighted_choice(weights_dict):
-    total = sum(weights_dict.values())
-    r = random.random() * total
-    upto = 0
-    for k, w in weights_dict.items():
-        upto += w
-        if upto >= r:
-            return k
-    return random.choice(HANDS)
 
 # ---------------------------
 # 세션 상태
@@ -42,17 +27,10 @@ if "user_two" not in st.session_state:
     st.session_state.user_two = ["가위", "바위"]
 if "ai_two" not in st.session_state:
     st.session_state.ai_two = ["가위", "바위"]
-if "user_keep_history" not in st.session_state:
-    st.session_state.user_keep_history = []
+if "ai_keep" not in st.session_state:
+    st.session_state.ai_keep = None
 if "pending_choice" not in st.session_state:
     st.session_state.pending_choice = None
-
-# ---------------------------
-# AI 두 손 선택 전략
-# ---------------------------
-def ai_pick_two():
-    # 간단히 랜덤 전략
-    return [random.choice(HANDS), random.choice(HANDS)]
 
 # ---------------------------
 # 헤더
@@ -81,7 +59,9 @@ if st.session_state.phase == "pick_two":
     st.session_state.user_two = [u1, u2]
 
     if st.button("🔍 공개하기"):
-        st.session_state.ai_two = ai_pick_two()
+        # AI 두 손 & 최종 남길 손 미리 확정
+        st.session_state.ai_two = [random.choice(HANDS), random.choice(HANDS)]
+        st.session_state.ai_keep = random.choice(st.session_state.ai_two)
         st.session_state.phase = "reveal"
         st.rerun()
 
@@ -116,7 +96,7 @@ elif st.session_state.phase == "keep_one":
 
 elif st.session_state.phase == "result":
     user_keep = st.session_state.pending_choice
-    ai_keep = best_response(st.session_state.ai_two, user_keep)
+    ai_keep = st.session_state.ai_keep  # 미리 확정된 손 사용
 
     st.subheader("4) 최종 결과")
     c1, c2 = st.columns(2)
@@ -141,8 +121,8 @@ elif st.session_state.phase == "result":
         else:
             st.session_state.score["ai"] += 1
 
-        st.session_state.user_keep_history.append(user_keep)
         st.session_state.round += 1
         st.session_state.phase = "pick_two"
+        st.session_state.ai_keep = None
         st.session_state.pending_choice = None
         st.rerun()
