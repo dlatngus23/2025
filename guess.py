@@ -16,7 +16,7 @@ COLOR_EMPTY   = "#d3d6da"   # 빈칸 테두리
 # ---------------------------
 # 기본 단어 목록
 # ---------------------------
-DEFAULT_WORDS = [
+WORDS = [
     "APPLE","GRAPE","MANGO","BERRY","LEMON","PEACH","OLIVE","MELON","GUAVA",
     "BASIC","STONE","PLANT","CHAIR","TABLE","CLOUD","STORM","RIVER","MUSIC",
     "ROBOT","LASER","CABLE","BRAVE","SMART","HAPPY","FUNNY","ANGEL","DEVIL",
@@ -88,38 +88,12 @@ def render_empty_row(current_text=""):
 # ---------------------------
 # 세션 상태
 # ---------------------------
-if "words" not in st.session_state:
-    st.session_state.words = DEFAULT_WORDS[:]
 if "target" not in st.session_state:
-    st.session_state.target = pick_target(st.session_state.words)
+    st.session_state.target = pick_target(WORDS)
 if "guesses" not in st.session_state:
     st.session_state.guesses = []
 if "current" not in st.session_state:
     st.session_state.current = ""
-
-# ---------------------------
-# 사이드바 (새 게임/목록 교체)
-# ---------------------------
-st.sidebar.header("⚙️ 설정")
-custom_list = st.sidebar.text_area("커스텀 5글자 단어 목록 (영문, 줄바꿈 구분)", height=160)
-col1, col2 = st.sidebar.columns(2)
-with col1:
-    if st.button("새 게임"):
-        st.session_state.target = pick_target(st.session_state.words)
-        st.session_state.guesses = []
-        st.session_state.current = ""
-        st.experimental_rerun()
-with col2:
-    if st.button("목록 적용"):
-        words = [w.strip().upper() for w in custom_list.splitlines() if len(w.strip())==5 and w.strip().isalpha()]
-        if len(words) >= 10:
-            st.session_state.words = list(dict.fromkeys(words))
-            st.session_state.target = pick_target(st.session_state.words)
-            st.session_state.guesses = []
-            st.session_state.current = ""
-            st.sidebar.success(f"{len(words)}개 단어 적용됨")
-        else:
-            st.sidebar.error("최소 10개 이상의 5글자 영단어를 넣어주세요.")
 
 # ---------------------------
 # 헤더
@@ -174,7 +148,7 @@ if game_over:
     else:
         st.error(f"실패! 😵  정답은 **{st.session_state.target}** 였어요.")
     if st.button("🔁 새 게임 시작"):
-        st.session_state.target = pick_target(st.session_state.words)
+        st.session_state.target = pick_target(WORDS)
         st.session_state.guesses = []
         st.session_state.current = ""
         st.experimental_rerun()
