@@ -1,6 +1,6 @@
 import streamlit as st
 
-st.title("특정 단어 포함 문장 찾기")
+st.title("특정 단어가 포함된 문장 찾기")
 
 # 1. 텍스트 입력 받기
 text = st.text_area("텍스트를 입력하세요", height=200)
